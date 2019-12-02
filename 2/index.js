@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-fetch("https://gist.githubusercontent.com/AlexejheroYTB/6196bb3f5a342473a5c94245a9582462/raw/c26c08531013764e89368035bda9de11ad9e4a38/AoC-2015-Data-2.json").then(async res => {
+fetch("https://gist.githubusercontent.com/AlexejheroYTB/6196bb3f5a342473a5c94245a9582462/raw/9b55e517125317f06e5c314dac34b96112544200/Data-2.json").then(async res => {
     var json = await res.json();
     
     var total = 0;
