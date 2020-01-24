@@ -19,8 +19,8 @@
 | [10](https://adventofcode.com/2015/day/10) | [10.js](10.js) | `329356` | `4666278` |
 | [11](https://adventofcode.com/2015/day/11) | [11.js](11.js) | `hxbxxyzz` | `hxcaabcc` |
 | [12](https://adventofcode.com/2015/day/12) | [12.js](12.js) | `156366` | `96852` |
-| [13](https://adventofcode.com/2015/day/13) |  |  |  |
-| [14](https://adventofcode.com/2015/day/14) |  |  |  |
+| [13](https://adventofcode.com/2015/day/13) | [13.js](13.js) | `618` | `601` |
+| [14](https://adventofcode.com/2015/day/14) | [14.js](14.js) | `2640` | `1102` |
 | [15](https://adventofcode.com/2015/day/15) |  |  |  |
 | [16](https://adventofcode.com/2015/day/16) |  |  |  |
 | [17](https://adventofcode.com/2015/day/17) |  |  |  |
