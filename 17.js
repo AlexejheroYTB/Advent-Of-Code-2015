@@ -1,4 +1,4 @@
-var t = [];
+var t = 0, m = 21;
 
 for (var a1 = 0; a1 < 2; a1++)
 for (var a2 = 0; a2 < 2; a2++)
@@ -45,12 +45,15 @@ for (var a20 = 0; a20 < 2; a20++) {
   var s = s1+s2+s3+s4+s5+s6+s7+s8+s9+s10+s11+s12+s13+s14+s15+s16+s17+s18+s19+s20;
   var c = a1+a2+a3+a4+a5+a6+a7+a8+a9+a10+a11+a12+a13+a14+a15+a16+a17+a18+a19+a20;
   if (s == 150) {
-    t.push(c);
+    if (c == m) t++;
+	else if (c < m) {
+		m = c;
+		t = 1;
+	}
   }
 
   console.log(`${a1}${a2}${a3}${a4}${a5}${a6}${a7}${a8}${a9}${a10}${a11}${a12}${a13}${a14}${a15}${a16}${a17}${a18}${a19}${a20} - ${c} - ${s}${(s == 150 ? " (YES)" : "")}`)
 
 }
 
-t.sort();
-console.log(`${t[0]} - ${t.filter(x => x == t[0]).length}`);
+console.log(`${m} - ${t}`);
