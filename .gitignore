@@ -4,3 +4,4 @@ Release
 *.sln
 CS
 CPP
+pnpm-debug.log
