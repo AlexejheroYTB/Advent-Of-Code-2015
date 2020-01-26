@@ -21,11 +21,11 @@
 | [12](https://adventofcode.com/2015/day/12) | [12.js](12.js) | `156366` | `96852` |
 | [13](https://adventofcode.com/2015/day/13) | [13.js](13.js) | `618` | `601` |
 | [14](https://adventofcode.com/2015/day/14) | [14.js](14.js) | `2640` | `1102` |
-| [15](https://adventofcode.com/2015/day/15) |  |  |  |
-| [16](https://adventofcode.com/2015/day/16) |  |  |  |
-| [17](https://adventofcode.com/2015/day/17) |  |  |  |
-| [18](https://adventofcode.com/2015/day/18) |  |  |  |
-| [19](https://adventofcode.com/2015/day/19) |  |  |  |
+| [15](https://adventofcode.com/2015/day/15) | [15.js](15.js) | `13882464` | `11171160` |
+| [16](https://adventofcode.com/2015/day/16) | [16.js](16.js) | `373` | `260` |
+| [17](https://adventofcode.com/2015/day/17) | [17.js](17.js) | `1638` | `17` |
+| [18](https://adventofcode.com/2015/day/18) | [18.js](18.js) | `768` | `781` |
+| [19](https://adventofcode.com/2015/day/19) | [19.js](19.js) | `535` |  |
 | [20](https://adventofcode.com/2015/day/20) |  |  |  |
 | [21](https://adventofcode.com/2015/day/21) |  |  |  |
 | [22](https://adventofcode.com/2015/day/22) |  |  |  |
