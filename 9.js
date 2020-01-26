@@ -38,21 +38,14 @@ for (var distance of distances) {
 
 var max = 0;
 for (var place1 of places) {
-  var d = 0;
   for (var place2 of places.filter(p => p != place1)) {
-    d = getDistanceBetween(place1, place2);
     for (var place3 of places.filter(p => p != place1 && p != place2)) {
-      d = getDistanceBetween(place1, place2) + getDistanceBetween(place2, place3);
       for (var place4 of places.filter(p => p != place1 && p != place2 && p != place3)) {
-        d = getDistanceBetween(place1, place2) + getDistanceBetween(place2, place3) + getDistanceBetween(place3, place4);
         for (var place5 of places.filter(p => p != place1 && p != place2 && p != place3 && p != place4)) {
-          d = getDistanceBetween(place1, place2) + getDistanceBetween(place2, place3) + getDistanceBetween(place3, place4) + getDistanceBetween(place4, place5);
           for (var place6 of places.filter(p => p != place1 && p != place2 && p != place3 && p != place4 && p != place5)) {
-            d = getDistanceBetween(place1, place2) + getDistanceBetween(place2, place3) + getDistanceBetween(place3, place4) + getDistanceBetween(place4, place5) + getDistanceBetween(place5, place6);
             for (var place7 of places.filter(p => p != place1 && p != place2 && p != place3 && p != place4 && p != place5 && p != place6)) {
-              d = getDistanceBetween(place1, place2) + getDistanceBetween(place2, place3) + getDistanceBetween(place3, place4) + getDistanceBetween(place4, place5) + getDistanceBetween(place5, place6) + getDistanceBetween(place6, place7);
               for (var place8 of places.filter(p => p != place1 && p != place2 && p != place3 && p != place4 && p != place5 && p != place6 && p != place7)) {
-                d = getDistanceBetween(place1, place2) + getDistanceBetween(place2, place3) + getDistanceBetween(place3, place4) + getDistanceBetween(place4, place5) + getDistanceBetween(place5, place6) + getDistanceBetween(place6, place7) + getDistanceBetween(place7, place8);
+                var d = getDistanceBetween(place1, place2) + getDistanceBetween(place2, place3) + getDistanceBetween(place3, place4) + getDistanceBetween(place4, place5) + getDistanceBetween(place5, place6) + getDistanceBetween(place6, place7) + getDistanceBetween(place7, place8);
 
                 console.log(d);
 
