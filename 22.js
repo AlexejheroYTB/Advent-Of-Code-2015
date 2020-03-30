@@ -1,3 +1,5 @@
+const clone = require("lodash/cloneDeep");
+
 const spells = [
   {
     name: "Magic Missle",
@@ -50,56 +52,62 @@ class Character {
   armor = 0;
 }
 
-function turn(cost, t, Player, Boss, effects) {
+function turn(cost, t, Player, Boss, effects, sps) {
+  if (t % 2 == 1) Player.health--;
+
+  if (Player.health < 1) return;
+  if (Boss.health < 1) return finish(cost, clone(sps), clone(Player), clone(Boss));
+
   var effectsToRemove = [];
   for (var effect of effects) {
     if (effect.turn) effect.turn(Player, Boss);
     effect.duration--;
     if (effect.duration == 0) {
-      effectsToRemove.push(effect);
+      effectsToRemove.push(effect.name);
       if (effect.uncast) effect.uncast(Player, Boss);
     }
   }
-  effects = effects.filter(e => !effectsToRemove.includes(e));
+  effects = effects.filter(e => !effectsToRemove.includes(e.name));
 
   if (Player.health < 1) return;
-  if (Boss.health < 1) return finish(cost);
+  if (Boss.health < 1) return finish(cost, clone(sps), clone(Player), clone(Boss));
 
   if (t % 2 == 1) {
     var castableSpells = spells.filter(s => s.cost < Player.mana).filter(s => !effects.map(e => e.name).includes(s.name)).filter(s => cost + s.cost < min);
     if (castableSpells.length == 0) return;
-    for (var s of castableSpells.sort(() => Math.floor(Math.random() * 2) * -2 + 1)) {
-      spell(s, cost, t, Object.assign(Object.create(Object.getPrototypeOf(Player)), Player), Object.assign(Object.create(Object.getPrototypeOf(Boss)), Boss), [...effects])
+    for (var s of castableSpells) {
+      spell(s, cost, t, clone(Player), clone(Boss), clone(effects), clone(sps));
     }
   } else {
     Player.health -= Math.max(1, Boss.damage - Player.armor);
+
+    if (Player.health < 1) return;
+    if (Boss.health < 1) return finish(cost, clone(sps), clone(Player), clone(Boss));
+
+    if (cost >= min) return;
+    turn(cost, t + 1, clone(Player), clone(Boss), clone(effects), clone(sps));
   }
-
-  if (Player.health < 1) return;
-  if (Boss.health < 1) return finish(cost);
-
-  if (cost >= min) return;
-  turn(cost, t + 1, Object.assign(Object.create(Object.getPrototypeOf(Player)), Player), Object.assign(Object.create(Object.getPrototypeOf(Boss)), Boss), [...effects]);
 }
 
-function spell(spell, cost, t, Player, Boss, effects) {
+function spell(spell, cost, t, Player, Boss, effects, sps) {
+  sps.push(spell.name);
   cost += spell.cost;
-  if (spell.duration) effects.push(spell);
+  Player.mana -= spell.cost;
+  if (spell.duration) effects.push(clone(spell));
   if (spell.cast) spell.cast(Player, Boss);
 
   if (Player.health < 1) return;
-  if (Boss.health < 1) return finish(cost);
+  if (Boss.health < 1) return finish(cost, clone(sps), clone(Player), clone(Boss));
 
   if (cost >= min) return;
-  turn(cost, t + 1, Object.assign(Object.create(Object.getPrototypeOf(Player)), Player), Object.assign(Object.create(Object.getPrototypeOf(Boss)), Boss), [...effects]);
+  turn(cost, t + 1, clone(Player), clone(Boss), clone(effects), clone(sps));
 }
 
-// var min = 802;
 var min = Infinity;
-function finish(cost) {
+function finish(cost, sps, Player, Boss) {
   if (cost < min) {
     min = cost;
-    console.log(cost);
+    console.log([cost, sps, Player, Boss]);
   }
 }
 
@@ -111,4 +119,4 @@ var Boss = new Character();
 Boss.health = 51;
 Boss.damage = 9;
 
-turn(0, 1, Player, Boss, []);
+turn(0, 1, Player, Boss, [], []);
