@@ -1,3 +1,5 @@
+const process = require('process');
+
 var input = `bot 153 gives low to bot 105 and high to bot 10
 bot 84 gives low to bot 149 and high to bot 198
 bot 32 gives low to bot 124 and high to bot 76
@@ -229,22 +231,192 @@ bot 53 gives low to bot 175 and high to bot 201
 bot 137 gives low to bot 129 and high to bot 94
 bot 149 gives low to bot 3 and high to bot 4
 bot 101 gives low to bot 22 and high to bot 43`;
+var target1 = 17;
+var target2 = 61;
+
+// input = `value 5 goes to bot 0
+// value 17 goes to bot 0
+// value 61 goes to bot 1
+// value 61 goes to bot 2
+// bot 0 gives low to bot 1 and high to bot 2
+// bot 1 gives low to output 0 and high to output 1
+// bot 2 gives low to output 2 and high to output 3`;
 
 const bots = [];
+const outputs = [];
+
+for (const i of input.split(/\n/g)){
+    if (i.startsWith('value')) {
+        const [_, val, bot] = i.match(/value (\d+) goes to bot (\d+)/);
+        bots[bot] = bots[bot] || {};
+        bots[bot].values = bots[bot].values || [];
+        bots[bot].values.push(parseInt(val));
+    } else {
+        const [, bot, lowType, low, highType, high] = i.match(/bot (\d+) gives low to (bot|output) (\d+) and high to (bot|output) (\d+)/);
+        bots[bot] = bots[bot] || {};
+        bots[bot].low = {to: parseInt(low), type: lowType};
+        bots[bot].high = {to: parseInt(high), type: highType};
+    }
+}
+
+let done = false;
+while (!done) {
+    done = true;
+    for (const b of bots) {
+        if (b.values && b.values.length == 2 && b.low) {
+            done = false;
+            const [l, h] = b.values.sort((a, b) => a-b); // HOLY FUCK THIS WAS SORTING IT ALPHABETICALLY KAWRNGJKLERHJGLIERWJGELKTRJEQ5RLKGJEPO
+        
+            console.log(`Bot ${bots.indexOf(b)} gives low ${l} to ${b.low.type} ${b.low.to} and high ${h} to ${b.high.type} ${b.high.to}`);
+
+            if (l == target1 && h == target2) {
+                console.log(`FOUND!!! ${bots.indexOf(b)}`);
+                // process.exit(0);
+            }
+            
+            if (b.low.type == "bot") {
+                bots[b.low.to] = bots[b.low.to] || {};
+                bots[b.low.to].values = bots[b.low.to].values || [];
+                bots[b.low.to].values.push(l);
+            } else {
+                outputs[b.low.to] = outputs[b.low.to] || [];
+                outputs[b.low.to].push(l);
+            }
+
+            if (b.high.type == "bot") {
+                bots[b.high.to] = bots[b.high.to] || {};
+                bots[b.high.to].values = bots[b.high.to].values || [];
+                bots[b.high.to].values.push(h);
+            } else {
+                outputs[b.high.to] = outputs[b.high.to] || [];
+                outputs[b.high.to].push(h);
+            }
+
+            delete b.low;
+            delete b.high;
+
+            b.values = [];
+        }
+    }
+}
+
+console.log(outputs[0] * outputs[1] * outputs[2]);
+
+/* My first attempt did not work, as it always returned 160.
+
+const bots = [];
+const outputs = [];
 const queue = [];
 
-for (const instruction of input.split(""))
+for (const instruction of input.split(/\n/g))
 {
     if (instruction.startsWith("value "))
     {
-        let botId = parseInt(instruction.substr(6),10);
-        let value = parseInt(instruction.substr(10).match(/\d+/g)[0]);
-
+        let botId = parseInt(instruction.match(/\d+/g)[1]);
+        let value = parseInt(instruction.match(/\d+/g)[0]);
+        
         if (!bots[botId]) bots[botId] = [];
         bots[botId].push(value);
+        
+        console.log("Added value " + value + " to bot " + botId);
     }
     else if (instruction.startsWith("bot "))
     {
+        let botId = parseInt(instruction.match(/\d+/g)[0]);
+        let low = parseInt(instruction.match(/\d+/g)[1]);
+        let high = parseInt(instruction.match(/\d+/g)[2]);
         
+        let lowOutput = instruction.includes("low to output");
+        let highOutput = instruction.includes("high to output");
+        
+        if (!bots[botId]) bots[botId] = [];
+        if (true && bots[botId].length != 2)
+        {
+            queue.push({botId, low, high, lowOutput, highOutput});
+            
+            console.log(`Queued action ${botId} -> ${low}[${lowOutput}],${high}[${highOutput}]`);
+        }
+        else
+        {
+            if (!lowOutput)
+            {
+                if (!bots[low]) bots[low] = [];
+                bots[low].push(bots[botId].sort()[0]);
+            }
+            else 
+            {
+                if (!outputs[low]) outputs[low] = [];
+                outputs[low].push(bots[botId].sort()[0]);
+            }
+            
+            if (!highOutput)
+            {
+                if (!bots[high]) bots[high] = [];
+                bots[high].push(bots[botId].sort().reverse()[0]);
+            }
+            else
+            {
+                if (!outputs[high]) outputs[high] = [];
+                outputs[high].push(bots[botId].sort().reverse()[0]);
+            }
+                        
+            console.log(`Executed action ${botId} -> ${low}[${lowOutput}],${high}[${highOutput}] (${bots[botId].sort()[0]},${bots[botId].sort().reverse()[0]})`);
+
+            if (bots[botId].includes(target1) && bots[botId].includes(target2))
+            {
+                console.log(botId);
+                process.exit(0);
+            }
+
+            bots[botId] = bots[botId].filter(v => v != bots[botId].sort()[0] && v != bots[botId].sort().reverse()[0]);
+        }
     }
+    
+    let didSomething = false;
+    do {
+        didSomething = false;
+
+        for (const i of queue.filter(x => !x.done))
+        {
+            if (bots[i.botId].length != 2) continue;
+            didSomething = true;
+            i.done = true;
+            
+            if (!i.lowOutput)
+            {
+                if (!bots[i.low]) bots[i.low] = [];
+                bots[i.low].push(bots[i.botId].sort()[0]);
+            }
+            else
+            {
+                if (!outputs[i.low]) outputs[i.low] = [];
+                outputs[i.low].push(bots[i.botId].sort()[0]);
+            }
+            
+            if (!i.highOutput)
+            {
+                if (!bots[i.high]) bots[i.high] = [];
+                bots[i.high].push(bots[i.botId].sort()[1]);
+            }
+            else
+            {
+                if (!outputs[i.high]) outputs[i.high] = [];
+                outputs[i.high].push(bots[i.botId].sort()[1]);
+            }
+            
+            console.log(`Executed queued action ${i.botId} -> ${i.low}[${i.lowOutput}],${i.high}[${i.highOutput}] (${bots[i.botId].sort()[0]},${bots[i.botId].sort().reverse()[0]})`);
+            
+            if (bots[i.botId].includes(target1) && bots[i.botId].includes(target2))
+            {
+                console.log(i.botId);
+                //process.exit(0);
+            }
+            
+            bots[i.botId] = bots[i.botId].filter(v => v != bots[i.botId].sort()[0] && v != bots[i.botId].sort().reverse()[0]);
+        }
+    } while (didSomething);
 }
+
+console.log(queue.filter(x => !x.done));
+
+*/
