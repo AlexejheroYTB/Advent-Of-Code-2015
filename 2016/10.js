@@ -302,7 +302,7 @@ while (!done) {
 
 console.log(outputs[0] * outputs[1] * outputs[2]);
 
-/* My first attempt did not work, as it always returned 160.
+/* My first attempt did not work, as it always returned 160. ---- I AM STUPID, SORT IS DONE ALPHABETICALLY BECAUSE THEY ARE STRINGS AAAAA
 
 const bots = [];
 const outputs = [];
