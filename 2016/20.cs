@@ -1,31 +1,35 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 public static class Program
 {
 	public static void Main()
 	{
-	    var add = 0;
+	    int add = 63; // Accidentally did a for loop on int before so I had to change it to uint and remember the result
 	    
-		for (int i = 0; i <= 4294967295; i++)
+		for (uint i = (uint) int.MaxValue + 1; i > 0; i++)
 		{
 		    bool ok = true;
 		    foreach (long[] x in Input) 
 		    {
+			    // While it would be a good idea to merge the intervals, we don't need to do
+			    // that since we can just leave this script running for half an hour instead.
+			    
 		        if (x[0] <= i && i <= x[1])
 		        {
 		            ok = false;
 		            break;
 		        }
 		    }
-		    
-		    if (ok) add++;
+
+		    if (ok)
+		    {
+			    add++;
+			    Console.WriteLine("Found " + i);
+		    }
 		}
 		
-		Console.WriteLine(add);
+		Console.WriteLine("Result is " + add);
 	}
 	
+	#region Input
 	public static long[][] Input = @"272152717-281364173
 480675455-489214207
 3562619188-3566180938
@@ -1129,5 +1133,6 @@ public static class Program
 4214551647-4234775225
 1469208064-1469259449
 4245296921-4257493526
-3930128245-3930477154".Split('\n').Select(s => s.Split('-').Select(e => long.Parse(e)).ToArray()).ToArray();
+3930128245-3930477154".Split('\n').Select(s => s.Split('-').Select(long.Parse).ToArray()).ToArray();
+	#endregion
 }

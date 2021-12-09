@@ -1,5 +1,10 @@
+*.csproj
+*.sln
+.idea
 .vscode
+bin
 node_modules
+obj
 package.json
 package-lock.json
 pnpm-lock.yaml
