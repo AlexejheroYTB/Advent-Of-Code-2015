@@ -39,6 +39,46 @@ const input = `#################################################################
 #.#.#.#.#.#.#.#######.###.###.#.#.#.#.#.#.###.###.#.#.###.#.#.#.#.#.#.#####.#.#.#.#.###.#.#.#######.#.#.#.###.#.#.#.#.###.#.#.#.#.#.#.#.#####.#.#.#.#.#####.#####.###.###.#.#.#.#.#.#.#.#
 #...#.#...#.#.......#.......#.....#...#.......#...#...#...#.....#.#.....#...#.#...#.....#.#.........#.#.#.....#.....#...#.........#.#.#.......#.........#...#.....#.#...#.#...#.....#...#
 #########################################################################################################################################################################################`.split('\n');
+
+const positions = [
+    [177, 27],
+    [141, 35],
+    [141, 9],
+    [151, 13],
+    [9, 11],
+    [43, 31],
+    [29, 3],
+    [1, 19],
+];
+
+const Pathfinding = require("pathfinding");
+const grid = new Pathfinding.Grid(input.map(line => line.split('').map(c => c === '#' ? 1 : 0)));
+const astar = new Pathfinding.AStarFinder();
+
+var min = Number.MAX_SAFE_INTEGER;
+function backtracking(currentlyAt, remainingPositions, steps) {
+    if (remainingPositions.length == 0) {
+        const path = astar.findPath(currentlyAt[0], currentlyAt[1], 177, 27, grid.clone());
+
+        if (steps + path.length - 1 < min) {
+            min = steps + path.length - 1;
+            console.log(min);
+        }
+        return;
+    }
+
+    for (const position of remainingPositions) {
+        const path = astar.findPath(currentlyAt[0], currentlyAt[1], position[0], position[1], grid.clone());
+        if (path.length > 0) {
+            backtracking([position[0], position[1]], remainingPositions.filter(p => p[0] != position[0] || p[1] != position[1]), steps + path.length - 1);
+        }
+    }
+}
+
+backtracking(positions.shift(), positions, 0);
+console.log(min);
+
+/* Shitty
 const grid = [];
 
 let startingX, startingY;
@@ -85,3 +125,4 @@ function backtracking(grid, x, y, visited, steps) {
 
 backtracking(grid, startingY, startingX, [], 1);
 console.log("Minimum amount of steps is " + min);
+*/
