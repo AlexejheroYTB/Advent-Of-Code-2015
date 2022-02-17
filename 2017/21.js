@@ -1,5 +1,6 @@
 const mt = require("@pelevesque/matrix-transformers");
 
+let CURRENT = toMatrix(`.#./..#/###`);
 const input = `../.. => .../#.#/...
 #./.. => ..#/..#/#..
 ##/.. => .../#../..#
@@ -108,44 +109,98 @@ const input = `../.. => .../#.#/...
 ###/###/#.# => .#.#/.##./#.##/....
 ###/#.#/### => ..#./..#./..#./..##
 ###/###/### => ##.#/..##/.#.#/....`.split("\n").map(s => s.split(" => "));
-const rules = {};
 
-let current = ".#./..#/###";
-
-for (const line of input) {
-    const [pattern, result] = line;
-    
-    for (const transformation of getTransformations(pattern)) {
-        rules[transformation] = result;
-    }
+function toMatrix(str) {
+    return str.split("/").map(row => row.split("").map(char => char == "#" ? 1 : 0));
 }
 
-function getTransformations(pattern) {
-    const matrix = pattern.split("/").map(s => s.split(""));
+function toString(matrix) {
+    return matrix.map(row => row.map(num => num ? "#" : ".").join("")).join("/");
+}
 
-    const transformations = [];
-    transformations.push(matrix);
-    transformations.push(mt.rotate90(matrix));
-    transformations.push(mt.rotate180(matrix));
-    transformations.push(mt.rotate270(matrix));
+function getSubMatrix(matrix, size, y, x) {
+    let result = [];
+    for (let i = x; i < x + size; i++) {
+        let row = [];
+        for (let j = y; j < y + size; j++) {
+            row.push(matrix[i][j]);
+        }
+        result.push(row);
+    }
+    return result;
+}
+
+function expandMatrix(matrix) {
+    let curr = [];
+    curr.push(matrix);
+    curr.push(mt.rotate90(matrix));
+    curr.push(mt.rotate180(matrix));
+    curr.push(mt.rotate270(matrix));
 
     for (let i = 0; i < 4; i++) {
-        const me = transformations[i];
-        transformations.push(mt.reflectHorizontally(me));
-        transformations.push(mt.reflectVertically(me));
-        transformations.push(mt.reflectHorizontally(mt.reflectVertically(me)));
+        const me = curr[i];
+        curr.push(mt.reflectHorizontally(me));
+        curr.push(mt.reflectVertically(me));
+        curr.push(mt.reflectHorizontally(mt.reflectVertically(me)));
     }
 
-    return [...new Set(transformations.map(m => m.map(r => r.join("")).join("/")))];
+    curr = curr.map(toString);
+
+    let cor = input.find(v => curr.includes(v[0]));
+    return toMatrix(cor[1]);
 }
 
-for (let a = 1; a <= 5; a++) {
-    const splits = current.split("/");
-    if (splits[0].length % 2 == 0) {
-        for (let i = 0; i < splits.length; i += 2) {
-            
+/*
+
+    0           1
+
+0   0,0  0,1    0,0  0,1
+    1,0  1,1    1,0  1,1
+
+2   0,0  0,1    0,0  0,1
+    1,0  1,1    1,0  1,1
+
+
+0,0  0,1  0,2  0,3
+1,0  1,1  1,2  1,3
+2,0  2,1  2,2  2,3
+3,0  3,1  3,2  3,3
+
+x = mx + Math.floor(m / size) * size
+y = my + m % size * size
+
+*/
+
+function mergeMatrices(matrices) {
+    const size = Math.round(Math.sqrt(matrices.length));
+    const matrix = [];
+
+    for (let m = 0; m < matrices.length; m++) {
+        for (let y = 0; y < matrices[m][0].length; y++) {
+            for (let x = 0; x < matrices[m][0].length; x++) {
+                (matrix[x + Math.floor(m / size) * matrices[m][0].length] ??= [])[y + m % size * matrices[m][0].length] = matrices[m][x][y];
+            }
         }
-    } else {
-        
     }
+
+    return matrix;
 }
+
+for (let it = 0; it < 5; it++) {
+    if (CURRENT[0].length % 2 == 0) size = 2;
+    else size = 3;
+
+    let newMatrices = [];
+    for (let i = 0; i < CURRENT[0].length; i += size) {
+        for (let j = 0; j < CURRENT[0].length; j += size) {
+            newMatrices.push(expandMatrix(getSubMatrix(CURRENT, size, i, j)));
+        }
+    }
+
+    console.log(newMatrices);
+    CURRENT = mergeMatrices(newMatrices);
+    console.log(CURRENT);
+    console.log();
+}
+
+console.log(CURRENT.flat(2).filter(x => x).length);
