@@ -118,7 +118,7 @@ function toString(matrix) {
     return matrix.map(row => row.map(num => num ? "#" : ".").join("")).join("/");
 }
 
-function getSubMatrix(matrix, size, y, x) {
+function getSubMatrix(matrix, size, x, y) {
     let result = [];
     for (let i = x; i < x + size; i++) {
         let row = [];
@@ -186,7 +186,7 @@ function mergeMatrices(matrices) {
     return matrix;
 }
 
-for (let it = 0; it < 5; it++) {
+for (let it = 0; it < 18; it++) {
     if (CURRENT[0].length % 2 == 0) size = 2;
     else size = 3;
 
@@ -197,10 +197,8 @@ for (let it = 0; it < 5; it++) {
         }
     }
 
-    console.log(newMatrices);
     CURRENT = mergeMatrices(newMatrices);
-    console.log(CURRENT);
-    console.log();
+    console.log(it + 1);
 }
 
 console.log(CURRENT.flat(2).filter(x => x).length);
