@@ -278,3 +278,17 @@ for (const str of input) {
 }
 
 console.log(twos, threes, twos * threes);
+
+for (const a of input) {
+    for (const b of input) {
+        if (distance(a, b) == 1) console.log(a, b);
+    }
+}
+
+function distance(a, b) {
+    let dist = 0;
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] != b[i]) dist++;
+    }
+    return dist;
+}
