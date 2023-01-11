@@ -155,6 +155,7 @@ def part1():
 class WorkerQueue:
     def __init__(self):
         self.workers = [Worker() for _ in range(5)]
+        self.time = 0
 
     def find_available_worker(self):
         for worker in self.workers:
@@ -172,6 +173,7 @@ class WorkerQueue:
         return True
 
     def tick(self):
+        self.time += 1
         results = []
         for worker in self.workers:
             worker.time -= 1
@@ -201,13 +203,13 @@ def part2():
                     steps[step].append("STARTED")  # Mark the step as started so it's never started again
 
         # Tick the workers, for each of their results, add it to the finished list and remove them as a dependency
-        for result in queue.tick():
+        for result in sorted(queue.tick()):
             order += result
             for step2 in steps:
                 if steps[step2].count(result) > 0:
                     steps[step2].remove(result)
 
-    print(order)
+    print(order, queue.time)
 
 
 part2()
