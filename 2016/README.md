@@ -1,1 +1,1 @@
-![](https://i.imgur.com/Cvdy8wZ.png)
+![](./.image.png)

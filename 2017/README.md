@@ -1,1 +1,1 @@
-![](https://media.discordapp.net/attachments/794601897804955648/944244711898640474/unknown.png?width=520&height=674)
+![](./.image.png)
